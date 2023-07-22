@@ -1,4 +1,4 @@
-export default {
+export const Colors = {
   primary: '#CA0216',
   secondary: '#910D13',
   black: '#000',
@@ -25,3 +25,5 @@ export default {
     tabIconSelected: '#fff',
   },
 };
+
+export const selectedColor = Colors.yellow;
