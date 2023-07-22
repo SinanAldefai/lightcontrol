@@ -1,5 +1,5 @@
 import { Image, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Colors , selectedColor } from './src/styles/Colors';
 import { Slider } from '@miblanchard/react-native-slider';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,18 +13,27 @@ export default function App() {
   const colors = roomState.enabled ?
   {statusColor: selectedColor,trackColor:selectedColor }:
   {statusColor: Colors.white, trackColor:Colors.gray.light }
+  let gemiddelde = 0;
 
+  // const setBackground = (value: number[]) => {
+  //   // setSliderValue(value[0]);
+  //   setColorBackground(`rgb(255,255,${value[0]*100*2.55})`);
+  // }
 
-
-  // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-
-  const setBackground = (value: number[]) => {
-    // setSliderValue(value[0]);
-    setColorBackground(`rgb(255,255,${value[0]*100*2.55})`);
-  }
+  // useEffect(()=>{
+  //   const updatedRoom = {...roomState};
+  //   for (let i = 0 ; i < updatedRoom.devices.length; i++){
+  //     combinedValue += updatedRoom.devices[i].value;
+  //   }
+  //   gemiddelde = combinedValue/ updatedRoom.devices.length;
+  //   editMainSlider([gemiddelde]);
+  //   // console.log('Gemiddelde value', gemiddelde);
+  //   // updatedRoom.value = roomState.devices[0].value;
+  //   // setRoomState(updatedSlider);
+  //   // roomState.value
+  // },[])
 
   const editMainToggle = (value: boolean) => {
-    console.log(roomState);
     const updatedToggle = {...roomState};
     updatedToggle.enabled = value;
     setRoomState(updatedToggle);
@@ -32,10 +41,36 @@ export default function App() {
 
 
   const editMainSlider = (value: number[]) => {
-    const updatedSlider = {...roomState};
-    updatedSlider.value = value[0];
-    setRoomState(updatedSlider);
+    const updatedRoom = {...roomState};
+    updatedRoom.value = value[0];
+    let combinedValue = 0;
+    for (let i = 0 ; i < updatedRoom.devices.length; i++){
+      combinedValue += (updatedRoom.devices[i].value);
+    }
+    let average = combinedValue / updatedRoom.devices.length;
+    // console.log((updatedRoom.value-average)/(1- updatedRoom.value));
+    // console.log(((updatedRoom.value-average)/(1-average))*(1-updatedRoom.devices[i].value));
+
+
+    // updatedRoom.devices[i].value + ((updatedRoom.value-average)/(1-average))*(1-updatedRoom.devices[i].value);
+    for (let i = 0 ; i < updatedRoom.devices.length; i++){
+      console.log(average);
+      if( updatedRoom.devices[i].value !== 1){
+        updatedRoom.devices[i].value += ((updatedRoom.value-average)/(1-average))*(1-updatedRoom.devices[i].value);
+      }
+      else{
+        updatedRoom.devices[i].value = 1;
+      }
+    }
+      // console.log(1 - updatedRoom.devices[i].value ); //0.3
+      // console.log((1 - updatedRoom.value));          // 0.5  * 0.7
+      // console.log(0.3 * (updatedRoom.devices.length - combinedValue));
+      // updatedRoom.devices[i].value = (1 - updatedRoom.value) * (updatedRoom.devices[i].value)
+      // updatedRoom.devices[i].value + ((1 - updatedRoom.devices[i].value) * updatedRoom.value);
+      // console.log( updatedRoom.devices[i].value/ combinedValue * 100);
+    setRoomState(updatedRoom)
   };
+
 
 
   return (
@@ -62,6 +97,7 @@ export default function App() {
               value={roomState.enabled}/>
             </View>
             <Slider
+            // onSlidingStart={}
             containerStyle={styles.sliderContainer}
             trackStyle={styles.sliderTrackStyle}
             minimumTrackTintColor={colors.trackColor}
