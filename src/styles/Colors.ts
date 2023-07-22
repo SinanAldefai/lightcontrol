@@ -1,10 +1,15 @@
 export default {
   primary: '#CA0216',
   secondary: '#910D13',
-  yellow: '#F6B209',
-  gray: '#121318',
   black: '#000',
   white: '#FFF',
+  yellow: '#F6B209',
+  gray: {
+    light: '#3A3C49',
+    normal: '#667875',
+    dark: '#121318',
+  },
+  green: '#00EE11',
   light: {
     text: '#000',
     background: '#fff',
