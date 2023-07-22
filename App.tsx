@@ -5,28 +5,28 @@ import { Slider } from '@miblanchard/react-native-slider';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function App() {
-  const game_room = {
-    "room": "game_room",
+  const room = {
+    "name": "game_room",
     "title": "Game Room",
-    "roomIcon": "game_room",
+    "icon": "game_room",
     "value": 0,
     "enabled": true,
     "devices":[
       {
-      "deviceIcon": "light-led-strip",
-      "devceName": "HUE Led Strip",
+      "icon": "light-led-strip",
+      "name": "HUE Led Strip",
       "enabled": true,
       "value": 0
       },
       {
-      "deviceIcon": "light-standing5",
-      "devceName": "Standing Light",
+      "icon": "light-standing5",
+      "name": "Standing Light",
       "enabled": true,
       "value": 0
       },
       {
-      "deviceIcon": "light-led-strip",
-      "devceName": "Desk Strip",
+      "icon": "light-led-strip",
+      "name": "Desk Strip",
       "enabled": true,
       "value": 0
       },
@@ -35,11 +35,12 @@ export default function App() {
 
     }]
   }
+  const [roomState, setRoomState] = useState(room)
 
-  const [lightState,setLightState] = useState({})
   const [sliderValue, setSliderValue] = useState(0);
   const [isEnabled, setIsEnabled] = useState(false);
   const [colorBackground, setColorBackground] = useState('');
+
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const selectedColor = Colors.yellow;
@@ -53,6 +54,13 @@ export default function App() {
     setColorBackground(`rgb(255,255,${value[0]*100*2.55})`);
   }
 
+  const toggleSwitcher = () => {
+    setRoomState(prevState => ({
+      ...prevState,
+      fName: 'your updated value here'
+    }));
+  }
+
 
   return (
     <LinearGradient colors={[Colors.yellow, '#11131f']} style={{flex:1}} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0,0.5]}>
@@ -60,76 +68,40 @@ export default function App() {
         <SafeAreaView></SafeAreaView>
           <View style={styles.content}>
             {/* Header */}
-              <View style={styles.titleContainer}>
-                  <Image style={styles.titleIcon} tintColor={statusColor} source={require('./assets/glyphs/zone-controls/lights.png')} />
-                  <Text style={[{color:statusColor},styles.title]}>Lights</Text>
-              </View>
-            {/* Zone */}
+            <View style={styles.titleContainer}>
+                <Image style={styles.titleIcon} tintColor={statusColor} source={require('./assets/glyphs/zone-controls/lights.png')} />
+                <Text style={[{color:statusColor},styles.title]}>Lights</Text>
+            </View>
+
+
             <View style={styles.rowContent}>
               <View style={styles.flexRow}>
                 <View style={styles.roomIconContainer}>
                   <Image style={styles.roomIcon} tintColor={Colors.white} source={require('./assets/glyphs/zone/game_room.png')} />
                 </View>
-                <Text style={styles.headerText}>Game Room</Text>
+                <Text style={styles.headerText}>{room.title}</Text>
               </View>
               <Switch trackColor={{false: Colors.black, true: selectedColor}} ios_backgroundColor={Colors.black} thumbColor={'#fff'} onValueChange={toggleSwitch} value={isEnabled}/>
             </View>
             <Slider containerStyle={styles.sliderContainer} trackStyle={styles.sliderTrackStyle} minimumTrackTintColor={trackColor} thumbTintColor={thumbColor} value={sliderValue} onValueChange={value => setBackground(value)} disabled={!isEnabled}></Slider>
-            {/* Devices */}
             <Text style={styles.devicesTitle}>Devices</Text>
 
-            <View style={styles.devicesCard}>
-              <View style={styles.rowContent}>
-                <View style={styles.flexRow}>
-                  <View style={styles.devicesIconContainer}>
-                    <Image style={styles.devicesIcon} tintColor={Colors.white} source={require('./assets/glyphs/custom-devices/light-led-strip.png')} />
+            {Object.keys(room.devices).map((key,index) => {
+              return(
+                <View style={styles.devicesCard}>
+                  <View style={styles.rowContent}>
+                    <View style={styles.flexRow}>
+                      <View style={styles.devicesIconContainer}>
+                        <Image style={styles.devicesIcon} tintColor={Colors.white} source={require('./assets/glyphs/custom-devices/light-led-strip.png')} />
+                      </View>
+                      <Text style={styles.devicesCardText}>Game Room</Text>
+                    </View>
+                    <Switch trackColor={{false: Colors.black, true: selectedColor}} ios_backgroundColor={Colors.black} thumbColor={'#fff'} onValueChange={toggleSwitch} value={isEnabled}/>
                   </View>
-                  <Text style={styles.devicesCardText}>Game Room</Text>
+                  <Slider trackStyle={styles.sliderTrackStyle} minimumTrackTintColor={trackColor} thumbTintColor={thumbColor} value={sliderValue} onValueChange={value => setBackground(value)} disabled={!isEnabled}></Slider>
                 </View>
-                <Switch trackColor={{false: Colors.black, true: selectedColor}} ios_backgroundColor={Colors.black} thumbColor={'#fff'} onValueChange={toggleSwitch} value={isEnabled}/>
-              </View>
-              <Slider trackStyle={styles.sliderTrackStyle} minimumTrackTintColor={trackColor} thumbTintColor={thumbColor} value={sliderValue} onValueChange={value => setBackground(value)} disabled={!isEnabled}></Slider>
-            </View>
-            <View style={styles.devicesCard}>
-              <View style={styles.rowContent}>
-                <View style={styles.flexRow}>
-                  <View style={styles.devicesIconContainer}>
-                    <Image style={styles.devicesIcon} tintColor={Colors.white} source={require('./assets/glyphs/custom-devices/light-standing5.png')} />
-                  </View>
-                  <Text style={styles.devicesCardText}>Game Room</Text>
-                </View>
-                <Switch trackColor={{false: Colors.black, true: selectedColor}} ios_backgroundColor={Colors.black} thumbColor={'#fff'} onValueChange={toggleSwitch} value={isEnabled}/>
-              </View>
-              <Slider trackStyle={styles.sliderTrackStyle} minimumTrackTintColor={trackColor} thumbTintColor={thumbColor} value={sliderValue} onValueChange={value => setBackground(value)} disabled={!isEnabled}></Slider>
-            </View>
-
-            <View style={styles.devicesCard}>
-              <View style={styles.rowContent}>
-                <View style={styles.flexRow}>
-                  <View style={styles.devicesIconContainer}>
-                    <Image style={styles.devicesIcon} tintColor={Colors.white} source={require('./assets/glyphs/custom-devices/light-led-strip.png')} />
-                  </View>
-                  <Text style={styles.devicesCardText}>Game Room</Text>
-                </View>
-                <Switch trackColor={{false: Colors.black, true: selectedColor}} ios_backgroundColor={Colors.black} thumbColor={'#fff'} onValueChange={toggleSwitch} value={isEnabled}/>
-              </View>
-              <Slider trackStyle={styles.sliderTrackStyle} minimumTrackTintColor={trackColor} thumbTintColor={thumbColor} value={sliderValue} onValueChange={value => setBackground(value)} disabled={!isEnabled}></Slider>
-            </View>
-
-            <Text style={styles.devicesTitle}>Zones</Text>
-
-            <View style={styles.devicesCard}>
-              <View style={styles.rowContent}>
-                <View style={styles.flexRow}>
-                  <View style={styles.devicesIconContainer}>
-                    <Image style={styles.devicesIcon} tintColor={Colors.white} source={require('./assets/glyphs/custom-devices/light-led-strip.png')} />
-                  </View>
-                  <Text style={styles.devicesCardText}>Game Room</Text>
-                </View>
-                <Switch trackColor={{false: Colors.black, true: selectedColor}} ios_backgroundColor={Colors.black} thumbColor={'#fff'} onValueChange={toggleSwitch} value={isEnabled}/>
-              </View>
-              <Slider trackStyle={styles.sliderTrackStyle} minimumTrackTintColor={trackColor} thumbTintColor={thumbColor} value={sliderValue} onValueChange={value => setBackground(value)} disabled={!isEnabled}></Slider>
-            </View>
+                )
+            })}
 
           </View>
       </ScrollView>
