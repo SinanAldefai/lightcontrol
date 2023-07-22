@@ -4,28 +4,39 @@ import { Colors , selectedColor } from './src/styles/Colors';
 import { Slider } from '@miblanchard/react-native-slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Device, DevicesList } from './src/components/DevicesList';
-import { room } from './room';
-
-interface Zone {
-  // Zone interface
-}
+import { room } from './Room';
 
 export default function App() {
 
-  const [sliderValue, setSliderValue] = useState(0);
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [roomState, setRoomState] = useState(room);
   const [colorBackground, setColorBackground] = useState('#000');
-  const colors = isEnabled ?
+  const colors = roomState.enabled ?
   {statusColor: selectedColor,trackColor:selectedColor }:
   {statusColor: Colors.white, trackColor:Colors.gray.light }
 
 
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+  // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const setBackground = (value: number[]) => {
-    setSliderValue(value[0]);
+    // setSliderValue(value[0]);
     setColorBackground(`rgb(255,255,${value[0]*100*2.55})`);
   }
+
+  const editMainToggle = (value: boolean) => {
+    console.log(roomState);
+    const updatedToggle = {...roomState};
+    updatedToggle.enabled = value;
+    setRoomState(updatedToggle);
+  };
+
+
+  const editMainSlider = (value: number[]) => {
+    const updatedSlider = {...roomState};
+    updatedSlider.value = value[0];
+    setRoomState(updatedSlider);
+  };
+
 
   return (
     <LinearGradient colors={[colorBackground, '#11131f']} style={{flex:1}} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0,0.5]}>
@@ -43,22 +54,25 @@ export default function App() {
                 <View style={styles.roomIconContainer}>
                   <Image style={styles.roomIcon} tintColor={Colors.white} source={require('./assets/glyphs/zone/game_room.png')} />
                 </View>
-                <Text style={styles.headerText}>{room.title}</Text>
+                <Text style={styles.headerText}>{roomState.title}</Text>
               </View>
-              <Switch trackColor={{false: Colors.black, true: selectedColor}} ios_backgroundColor={Colors.black} thumbColor={'#fff'} onValueChange={toggleSwitch} value={isEnabled}/>
+              <Switch trackColor={{false: Colors.black, true: selectedColor}} ios_backgroundColor={Colors.black} thumbColor={'#fff'} onValueChange={(value) =>
+                  editMainToggle(value)
+              }
+              value={roomState.enabled}/>
             </View>
             <Slider
             containerStyle={styles.sliderContainer}
             trackStyle={styles.sliderTrackStyle}
             minimumTrackTintColor={colors.trackColor}
             thumbTintColor={Colors.white}
-            value={sliderValue}
-            onValueChange={value => setBackground(value)}
-            disabled={!isEnabled}></Slider>
+            value={roomState.value}
+            onValueChange={value => editMainSlider(value)}
+            disabled={!roomState.enabled}></Slider>
 
             <Text style={styles.devicesTitle}>Devices</Text>
 
-            <DevicesList devices={room.devices}></DevicesList>
+            <DevicesList devices={roomState.devices}></DevicesList>
 
           </View>
       </ScrollView>

@@ -21,26 +21,26 @@ export const room: Room = {
   "title": "Game Room",
   "icon": "game_room",
   "color": "yellow",
-  "value": 0,
+  "value": 0.8,
   "enabled": true,
   "devices":[
     {
     "icon": "light-led-strip",
     "name": "HUE Led Strip",
     "enabled": true,
-    "value": 0
+    "value": 0.8
     },
     {
     "icon": "light-standing5",
     "name": "Standing Light",
     "enabled": true,
-    "value": 0
+    "value": 0.3
     },
     {
     "icon": "light-led-strip",
     "name": "Desk Strip",
-    "enabled": true,
-    "value": 0
+    "enabled": false,
+    "value": 0.5
     },
   ],
   "zones": [{

@@ -2,8 +2,8 @@ import { Slider } from "@miblanchard/react-native-slider";
 import { Image, StyleSheet, Switch, Text, View } from "react-native";
 import { Colors, selectedColor } from "../styles/Colors";
 import { Icon, IconProps } from "./Icon";
-import { useState } from "react";
-import { room } from "../../room";
+import { useEffect, useState } from "react";
+import { room } from "../../Room";
 
 export interface Device {
   icon: string;
@@ -31,6 +31,10 @@ export const DevicesList: React.FC<Props> = ({ devices }) => {
     setDevicesState(updatedDevices);
   };
 
+  useEffect(()=>{
+    setDevicesState(room.devices);
+  },[room])
+
   return (
     <>
       {devicesState.map((device, index) => { // Get the device object from the devices object
@@ -39,7 +43,7 @@ export const DevicesList: React.FC<Props> = ({ devices }) => {
             <View style={styles.rowContent}>
               <View style={styles.flexRow}>
                 <View style={styles.devicesIconContainer}>
-                  <Icon size={50} color={'#FFF'} glyph={device.icon} />
+                  <Icon size={40} color={'#FFF'} glyph={device.icon} />
                 </View>
                 <Text style={styles.devicesCardText}>{device.name}</Text>
               </View>
@@ -56,8 +60,9 @@ export const DevicesList: React.FC<Props> = ({ devices }) => {
             </View>
             <Slider
                 trackStyle={styles.sliderTrackStyle}
-                minimumTrackTintColor={device.enabled ? selectedColor : Colors.gray.normal }
-                thumbTintColor={device.enabled ? selectedColor : Colors.gray.light}
+                minimumTrackTintColor={device.enabled ? selectedColor : Colors.gray.darkest }
+                maximumTrackTintColor={Colors.black }
+                thumbTintColor={device.enabled ? Colors.white : Colors.gray.normal}
                 value={device.value}
                 onValueChange={(value) =>
                   editSliders(index, value)

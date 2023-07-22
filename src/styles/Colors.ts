@@ -6,8 +6,9 @@ export const Colors = {
   yellow: '#F6B209',
   gray: {
     light: '#3A3C49',
-    normal: '#667875',
+    normal: '#767A94',
     dark: '#121318',
+    darkest: '#3A3C49'
   },
   green: '#00EE11',
   light: {
