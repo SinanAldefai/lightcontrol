@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Image, ImageSourcePropType, StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 
 export type IconProps = {
   color?: string,
@@ -7,18 +6,16 @@ export type IconProps = {
   size?: number,
   border?: boolean,
 }
-//custom-devices/light-led-strip
-
 
 export const Icon: React.FC<IconProps> = ({ color, glyph, size, border }) => {
   let dynamicGlyphPath;
   if (glyph) {
     switch (glyph) {
       case 'light-led-strip':
-        dynamicGlyphPath = require('../../assets/glyphs/custom-devices/light-led-strip.png');
+        dynamicGlyphPath = require('../../../assets/glyphs/custom-devices/light-led-strip.png');
         break;
       case 'light-standing5':
-        dynamicGlyphPath = require('../../assets/glyphs/custom-devices/light-standing5.png');
+        dynamicGlyphPath = require('../../../assets/glyphs/custom-devices/light-standing5.png');
         break;
       default:
         console.error(`Unknown glyph: ${glyph}`);

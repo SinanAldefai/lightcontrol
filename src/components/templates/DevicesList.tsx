@@ -1,9 +1,8 @@
 import { Slider } from "@miblanchard/react-native-slider";
 import { Image, StyleSheet, Switch, Text, View } from "react-native";
-import { Colors, selectedColor } from "../styles/Colors";
-import { Icon, IconProps } from "./Icon";
+import { Colors, selectedColor } from "../../styles/Colors";
+import { Icon, IconProps } from "../atoms/Icon";
 import { useEffect, useState } from "react";
-import { room } from "../../Room";
 import { LinearGradient } from "expo-linear-gradient";
 
 export interface Device {
@@ -15,27 +14,32 @@ export interface Device {
 
 interface Props {
   devices: Device[];
+  onUpdateDevices: (updatedDevices: Device[]) => void;
+  enabled: boolean;
 }
 
-export const DevicesList: React.FC<Props> = ({ devices }) => {
+export const DevicesList: React.FC<Props> = ({ devices,onUpdateDevices,enabled }) => {
 
   const [devicesState, setDevicesState] = useState(devices);
+
+  useEffect(() => {
+    setDevicesState(devices);
+  }, [devices]);
+
 
   const editToggles = (index: number, value: any) => {
     const updatedDevices = [...devices];
     updatedDevices[index].enabled = value;
     setDevicesState(updatedDevices);
+    onUpdateDevices(updatedDevices);
   };
 
-  const editSliders = (index: number, value: any) => {
+  const editSliders = (index: number, value: number[]) => {
     const updatedDevices = [...devices];
-    updatedDevices[index].value = value;
+    updatedDevices[index].value = value[0];
     setDevicesState(updatedDevices);
+    onUpdateDevices(updatedDevices);
   };
-
-  useEffect(()=>{
-    setDevicesState(room.devices);
-  },[room])
 
   return (
     <>
@@ -43,9 +47,11 @@ export const DevicesList: React.FC<Props> = ({ devices }) => {
         return (
           <View key={index} style={styles.devicesCard}>
             <LinearGradient
-              colors={[`hsl(40, 100%, ${(device.value*100)/2}%)`, '#11131f']}
+              colors={[device.enabled ? `hsl(40, 100%, ${(device.value*100)/2}%)`: Colors.gray.dark, Colors.gray.dark]}
               style={{flex:1,borderRadius:15}}
-              start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0,0.5]}
+              start={{ x: 0, y: -1 }}
+              end={{ x: 0, y: 1.5 }}
+              locations={[0,0.8]}
               >
               <View style={styles.padding}>
                 <View style={styles.rowContent}>
