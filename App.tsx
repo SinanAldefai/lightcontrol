@@ -9,29 +9,17 @@ import { room } from './Room';
 export default function App() {
 
   const [roomState, setRoomState] = useState(room);
-  const [colorBackground, setColorBackground] = useState('#000');
+  const [colorBackground, setColorBackground] = useState(`hsl(40,40%,${roomState.value*100/2}%)`);
   const colors = roomState.enabled ?
   {statusColor: selectedColor,trackColor:selectedColor }:
   {statusColor: Colors.white, trackColor:Colors.gray.light }
-  let gemiddelde = 0;
 
-  // const setBackground = (value: number[]) => {
-  //   // setSliderValue(value[0]);
-  //   setColorBackground(`rgb(255,255,${value[0]*100*2.55})`);
-  // }
+  interface DeviceStartingPoints {
+    [key: string]: number;
+  }
 
-  // useEffect(()=>{
-  //   const updatedRoom = {...roomState};
-  //   for (let i = 0 ; i < updatedRoom.devices.length; i++){
-  //     combinedValue += updatedRoom.devices[i].value;
-  //   }
-  //   gemiddelde = combinedValue/ updatedRoom.devices.length;
-  //   editMainSlider([gemiddelde]);
-  //   // console.log('Gemiddelde value', gemiddelde);
-  //   // updatedRoom.value = roomState.devices[0].value;
-  //   // setRoomState(updatedSlider);
-  //   // roomState.value
-  // },[])
+  const [mainStartingPoint, setMainStartingPoint] = useState(0);
+  const [subStartingPoints, setSubStartingPoints] = useState<DeviceStartingPoints>({});
 
   const editMainToggle = (value: boolean) => {
     const updatedToggle = {...roomState};
@@ -39,39 +27,41 @@ export default function App() {
     setRoomState(updatedToggle);
   };
 
-
   const editMainSlider = (value: number[]) => {
     const updatedRoom = {...roomState};
     updatedRoom.value = value[0];
-    let combinedValue = 0;
-    for (let i = 0 ; i < updatedRoom.devices.length; i++){
-      combinedValue += (updatedRoom.devices[i].value);
+    setColorBackground(`hsl(40,40%,${updatedRoom.value*100/2}%)`);
+    console.log(colorBackground);
+    if(updatedRoom.value > mainStartingPoint){
+      updatedRoom.devices.forEach((device)=>{
+        let roomAmountTillMax = 1 - mainStartingPoint;
+        let roomIncrease = updatedRoom.value-mainStartingPoint
+        let deviceAmountTillMax = 1 - subStartingPoints[device.name]
+        let newAmount = subStartingPoints[device.name] + (deviceAmountTillMax * (roomIncrease / roomAmountTillMax))
+        device.value = newAmount;
+      })
     }
-    let average = combinedValue / updatedRoom.devices.length;
-    // console.log((updatedRoom.value-average)/(1- updatedRoom.value));
-    // console.log(((updatedRoom.value-average)/(1-average))*(1-updatedRoom.devices[i].value));
-
-
-    // updatedRoom.devices[i].value + ((updatedRoom.value-average)/(1-average))*(1-updatedRoom.devices[i].value);
-    for (let i = 0 ; i < updatedRoom.devices.length; i++){
-      console.log(average);
-      if( updatedRoom.devices[i].value !== 1){
-        updatedRoom.devices[i].value += ((updatedRoom.value-average)/(1-average))*(1-updatedRoom.devices[i].value);
-      }
-      else{
-        updatedRoom.devices[i].value = 1;
-      }
+    else{
+      updatedRoom.devices.forEach((device)=>{
+        console.log('calculating');
+        let roomAmountTillMin = mainStartingPoint;
+        let roomDecrease = mainStartingPoint - updatedRoom.value
+        let deviceAmountTillMin = subStartingPoints[device.name]
+        let newAmount = subStartingPoints[device.name] - (deviceAmountTillMin * (roomDecrease / roomAmountTillMin))
+        device.value = newAmount;
+      })
     }
-      // console.log(1 - updatedRoom.devices[i].value ); //0.3
-      // console.log((1 - updatedRoom.value));          // 0.5  * 0.7
-      // console.log(0.3 * (updatedRoom.devices.length - combinedValue));
-      // updatedRoom.devices[i].value = (1 - updatedRoom.value) * (updatedRoom.devices[i].value)
-      // updatedRoom.devices[i].value + ((1 - updatedRoom.devices[i].value) * updatedRoom.value);
-      // console.log( updatedRoom.devices[i].value/ combinedValue * 100);
     setRoomState(updatedRoom)
   };
 
-
+  const onMainSlidingStart = (value: number[]) => {
+    setMainStartingPoint(value[0]);
+    let newSubStartingPoints:any = {};
+    roomState.devices.forEach(item => {
+      newSubStartingPoints[item.name] = item.value;
+    });
+    setSubStartingPoints(newSubStartingPoints);
+  }
 
   return (
     <LinearGradient colors={[colorBackground, '#11131f']} style={{flex:1}} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0,0.5]}>
@@ -97,13 +87,13 @@ export default function App() {
               value={roomState.enabled}/>
             </View>
             <Slider
-            // onSlidingStart={}
             containerStyle={styles.sliderContainer}
             trackStyle={styles.sliderTrackStyle}
             minimumTrackTintColor={colors.trackColor}
             thumbTintColor={Colors.white}
             value={roomState.value}
             onValueChange={value => editMainSlider(value)}
+            onSlidingStart={value => onMainSlidingStart(value)}
             disabled={!roomState.enabled}></Slider>
 
             <Text style={styles.devicesTitle}>Devices</Text>

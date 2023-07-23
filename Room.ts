@@ -47,6 +47,12 @@ export const room: Room = {
     "enabled": false,
     "value": 0.2
     },
+    {
+    "icon": "light-led-strip",
+    "name": "Desk Strip",
+    "enabled": false,
+    "value": 0.4
+    },
   ],
   "zones": [{
 

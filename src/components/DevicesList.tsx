@@ -26,6 +26,7 @@ export const DevicesList: React.FC<Props> = ({ devices }) => {
     updatedDevices[index].enabled = value;
     setDevicesState(updatedDevices);
   };
+
   const editSliders = (index: number, value: any) => {
     const updatedDevices = [...devices];
     updatedDevices[index].value = value;
